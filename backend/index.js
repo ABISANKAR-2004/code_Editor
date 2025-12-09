@@ -2,6 +2,7 @@ import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import axios from "axios";
+import path from "path";
 const app = express();
 
 const server = http.createServer(app);
@@ -120,6 +121,14 @@ io.on("connection", (socket) => {
   });
 });
 
+const __dirname = path.resolve();
+
+app.use(express.static(path.join(__dirname, "/frontend/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
+});
+
 server.listen(port, () => {
-  console.log("server is running on 5000");
+  console.log("server is working on port 5000");
 });
