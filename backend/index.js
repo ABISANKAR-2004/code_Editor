@@ -1,8 +1,9 @@
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
-import axios from "axios";
 import path from "path";
+import axios from "axios";
+
 const app = express();
 
 const server = http.createServer(app);
@@ -14,8 +15,6 @@ const io = new Server(server, {
 });
 
 const rooms = new Map();
-
-const port = process.env.PORT || 5000;
 
 io.on("connection", (socket) => {
   console.log("User Connected", socket.id);
@@ -50,10 +49,9 @@ io.on("connection", (socket) => {
     io.to(roomId).emit("userJoined", Array.from(rooms.get(currentRoom).users));
   });
 
-  socket.on("codeChange", ({ roomId, code  }) => {
+  socket.on("codeChange", ({ roomId, code }) => {
     if (rooms.has(roomId)) {
       rooms.get(roomId).code = code;
-      
     }
     socket.to(roomId).emit("codeUpdate", code);
   });
@@ -78,10 +76,10 @@ io.on("connection", (socket) => {
   });
 
   socket.on("languageChange", ({ roomId, language }) => {
-    if (rooms.has(roomId)) {
+     if (rooms.has(roomId)) {
         rooms.get(roomId).language = language;
-    }
-      io.to(roomId).emit("languageUpdate", language);
+    }  
+    io.to(roomId).emit("languageUpdate", language);
   });
 
   socket.on(
@@ -117,15 +115,17 @@ io.on("connection", (socket) => {
         Array.from(rooms.get(currentRoom).users)
       );
     }
-    console.log("user Disconnected!");
+    console.log("user Disconnected");
   });
 });
+
+const port = process.env.PORT || 5000;
 
 const __dirname = path.resolve();
 
 app.use(express.static(path.join(__dirname, "/frontend/dist")));
 
-app.get("*", (req, res) => {
+app.get(/.*/, (req, res) => {
   res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
 });
 
