@@ -117,7 +117,7 @@ io.on("connection", (socket) => {
         Array.from(rooms.get(currentRoom).users)
       );
     }
-    console.log("user Disconnected");
+    console.log("user Disconnected!");
   });
 });
 
